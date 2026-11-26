@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>赛博周易</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/markdown-it.min.js" defer></script>
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <main>
+    <header class="masthead">
+      <h1>赛博周易</h1>
+      <p>三钱起卦 · 周易经传</p>
+    </header>
+    <div class="layout">
+      <section class="question" aria-labelledby="question-title">
+        <h2 id="question-title">起卦</h2>
+        <form id="cast-form">
+          <label for="question">所问之事</label>
+          <textarea id="question" name="question" rows="5" required
+            placeholder="例如，我该如何准备接下来的面谈？"></textarea>
+          <button id="cast-button" type="submit" disabled>三钱起卦</button>
+        </form>
+        <div id="model-controls" hidden>
+          <p id="model-note"></p>
+          <button id="interpret-button" type="button" disabled>请求模型解读</button>
+        </div>
+        <p id="status" role="status"></p>
+      </section>
+      <section class="output" aria-labelledby="cast-title">
+        <h2 id="cast-title" tabindex="-1">卦象</h2>
+        <div id="empty">
+          <div class="empty-lines" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <p>起卦后查看本卦、动爻与经文。</p>
+        </div>
+        <div id="result" hidden>
+          <p id="cast-question" class="muted"></p>
+          <p id="cast-values" class="muted"></p>
+          <div id="figures"></div>
+          <h2 class="section-title">经文与传文</h2>
+          <div id="passages"></div>
+          <div id="originals"></div>
+        </div>
+        <section id="answer" aria-labelledby="answer-title" hidden>
+          <h2 id="answer-title" class="section-title" tabindex="-1">模型解读</h2>
+          <p id="answer-status" class="muted"></p>
+          <details id="reasoning" open hidden>
+            <summary>思考过程</summary>
+            <div id="reasoning-text" class="markdown reasoning-text"></div>
+          </details>
+          <section id="answer-content" aria-labelledby="content-title" hidden>
+            <h3 id="content-title">解读正文</h3>
+            <div id="answer-text" class="markdown"></div>
+          </section>
+        </section>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

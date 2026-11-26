@@ -1,17 +1,39 @@
 [project]
+# Distribution name used by uv and package indexes.
 name = "cyber-yi"
+# Release version used in wheel metadata.
 version = "0.1.0"
-description = "Add your description here"
+# Short summary displayed by package installers and indexes.
+description = "Three-coin Zhouyi readings from a local corpus"
+# Markdown file used as the distribution's long description.
 readme = "README.md"
+# Maintainer contact published with the distribution.
 authors = [
     { name = "morphism42", email = "sherlockdace@outlook.com" }
 ]
+# Minimum interpreter version for this package.
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    # Transport errors used to distinguish a stream timeout from other provider failures.
+    "httpx2>=2.12,<3",
+    # SDK for OpenAI-compatible Chat Completions requests.
+    "openai>=3.60.0",
+    # Test runner available alongside the standard-library unittest runner.
+    "pytest>=9.2.0",
+    # Loads optional model credentials from the configured dotenv file.
+    "python-dotenv>=1.2.4",
+    # Parses runtime settings and prompt templates with safe_load.
+    "pyyaml>=6,<7",
+    # Python lint command used to check application and test code.
+    "ruff>=0.17.6",
+]
 
 [project.scripts]
+# Console command mapped to the importable CLI entry point.
 cyber-yi = "cyber_yi:main"
 
 [build-system]
+# Supported uv build backend version range for wheels and source distributions.
 requires = ["uv_build>=0.13.1,<0.14.0"]
+# Backend module implementing the Python build hooks.
 build-backend = "uv_build"

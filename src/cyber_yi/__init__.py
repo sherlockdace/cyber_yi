@@ -1,2 +1,5 @@
-def main() -> None:
-    print("Hello from cyber-yi!")
+"""Cyber Yi console entry point."""
+
+from .cli import main
+
+__all__ = ["main"]
