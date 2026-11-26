@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Writing"
+  short_description: "Implement focused, maintainable code changes"
+  default_prompt: "Use $code-writing to implement this change with focused verification."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git Workflow"
+  short_description: "Land Git changes with a safe linear workflow"
+  default_prompt: "Use $git-workflow to land these changes safely on the target branch."

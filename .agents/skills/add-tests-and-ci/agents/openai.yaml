@@ -1,0 +1,4 @@
+interface:
+  display_name: "Add Tests and CI"
+  short_description: "Design reliable tests and integrate them with CI"
+  default_prompt: "Use $add-tests-and-ci to add focused regression coverage and integrate it with this repository's CI conventions."
