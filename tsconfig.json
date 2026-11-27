@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    // Modern browser APIs and ES modules; Vite emits the browser bundle.
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    // Check application and test types without generating intermediate JavaScript.
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    // Support Vite raw imports and Node's built-in test runner.
+    "types": ["vite/client", "node"]
+  },
+  "include": ["src/**/*.ts", "tests/**/*.ts", "vite.config.ts"]
+}

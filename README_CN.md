@@ -2,48 +2,52 @@
 
 [English](README.md)
 
-Cyber Yi 是一个用于体验周易占筮的 Python 包。它用三钱法生成六爻，展示卦象和动爻，从本地《周易》语料取辞，并可通过 OpenAI 兼容模型结合问题给出解读。
-
-## 使用流程
-
-1. 输入问题，自下而上起六爻。
-2. 查看本卦、动爻、之卦，以及附有出处的相关经文。无动爻时只显示本卦。
-3. 按需请求模型解读。起卦和查经可以离线完成。
-
-CLI 与本机网页共用同一套起卦和取辞逻辑。解读用于传统文化体验和自我反思。
+Cyber Yi 是一个纯前端 TypeScript 应用。它用三钱法生成六爻，展示本卦、动爻与之卦，从本地《周易》语料取辞，并可通过使用者配置的 OpenAI 兼容服务结合问题给出解读。Python 包、本机 Python 服务和 CLI 已移除。
 
 ## 运行
 
-在仓库根目录使用 Python 3.13 及以上版本和 `uv`。
+使用 Node.js 24 LTS (24.15+) 和 npm，在仓库根目录执行：
 
 ```sh
-uv sync
-uv run cyber-yi cast "我该如何准备接下来的面谈？"
-uv run cyber-yi cast --lines 9 7 7 7 7 7 --json
-uv run cyber-yi serve
+npm ci
+npm run dev
 ```
 
-打开服务启动时打印的本机地址。在同一个终端按 `Ctrl+C` 停止服务。离线模式可以起卦、查经和浏览卦画。`--lines` 按初爻到上爻复用一次起卦，`--json` 输出结构化结果。语料包含 450 段经文，另附彖传、大象和小象。[JSONL 语料](data/zhouyi.jsonl)
+打开终端显示的本机地址，按 `Ctrl+C` 停止开发服务。开发与构建使用 Node.js；部署后的网页不需要 Node.js 或 Python 服务。
+
+```sh
+npm test
+npm run build
+npm run preview
+```
+
+`npm test` 运行固定卦例、全部 4,096 种爻值组合、配置校验、模拟流式模型测试与打包页面的 DOM 集成测试。`npm run build` 先做严格 TypeScript 类型检查，再生成 `dist/`。将 `dist/` 部署到任意静态托管服务即可；资源使用相对路径，支持子目录部署。生产部署使用 HTTPS，本机开发可用 localhost/127.0.0.1。请通过 HTTP(S) 访问，不要直接双击 HTML 文件。
+
+## 使用流程
+
+1. 输入问题，点击「三钱起卦」。六爻按初爻到上爻生成，卦画以上爻在顶部显示。
+2. 查看本卦、动爻、之卦及附有出处的经传，无动爻时只显示本卦。
+3. 按需展开「模型配置」，填写 API 根地址、模型名称和自己的 API Key，再点击「请求模型解读」。
+
+起卦和查经在浏览器本地完成，无需模型请求。语料在构建时随应用打包；页面加载完成后可以断网起卦和查经。当前没有 Service Worker，不保证断网后的首次打开或刷新可用。
+
+语料包含 450 段经文，另附彖传、大象和小象。[JSONL 语料](data/zhouyi.jsonl) · 解读用于传统文化体验和自我反思。
 
 ## 连接模型
 
-在 [config/settings.yaml](config/settings.yaml) 填写 `model.base_url` 和 `model.name`，将 [.env.example](.env.example) 复制为 `.env` 后填写对应的 `OPENAI_API_KEY`。网页上点击「请求模型解读」，或在命令行用 `--interpret`。
+API 根地址例如 `https://api.example.com/v1`，程序会追加 `/chat/completions`。使用支持流式 Chat Completions 的服务；远程地址须为 HTTPS，本机服务可使用 HTTP。服务商必须允许浏览器来源、POST 及 `Authorization`、`Content-Type` 请求头的 CORS 请求。是否兼容需在实际端点验证；应用无法绕过服务商的跨域限制。
 
-当前配置发送 `max_completion_tokens: 16384`。这是 OpenAI Chat Completions 的输出上限字段，包含推理 token。DeepSeek 文档列出的上限字段是 `max_tokens`，当前配置的上限能否在 DeepSeek 生效尚待验证。[OpenAI Chat Completions](https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create) · [DeepSeek Chat Completions](https://api-docs.deepseek.com/zh-cn/api/create-chat-completion/)
+页面在请求前显示发送端点。只有点击解读后，原问题和选出的经传才会发往该端点。配置和密钥只存在当前页面内存，不写入 localStorage、sessionStorage、Cookie 或 `.env`，刷新后清除；也可点击「清除密钥」。不要将共享密钥放入源码、YAML 或前端构建环境变量，静态产物对访客可见。没有内置模型代理。
 
-DeepSeek 将 `reasoning_effort: medium` 映射为 `high`。Flash 思考模式下可以用 `top_p` 调整采样。使用其他兼容服务时，可将 DeepSeek 扩展 `thinking` 设为 `null`。`system` 和 `user` 提示都可修改。[提示模板](config/prompts.yaml) · [DeepSeek 思考模式](https://api-docs.deepseek.com/zh-cn/guides/thinking_mode/)
+[config/settings.yaml](config/settings.yaml) 管理问题长度、可选端点/模型默认值、请求总超时和生成参数；页面输入覆盖端点与模型默认值。`generation` 默认为空，请根据服务商需要设置 `max_tokens`、`max_completion_tokens`、`temperature`、`top_p`、`stop`、`reasoning_effort` 或 `thinking`。兼容服务支持的字段不一定相同。配置修改后需重新构建。
 
-```sh
-uv run cyber-yi cast "我该如何准备接下来的面谈？" --interpret
-```
+[config/prompts.yaml](config/prompts.yaml) 中的 `system`、`user` 可修改。用户提示保留 `{{ question }}`、`{{ cast }}` 和 `{{ passages }}` 三种占位符。模型分别流式返回思考过程和解读正文，支持 Markdown，原始 HTML 按文本展示。
 
-模型解读时，用户消息从原问题开始，接着用自然语言列出本卦、动爻和所取经传。有变卦时也会标明卦名和上下卦。网页分别流式显示思考过程和解读正文，支持 Markdown。失败后可在网页点击重试，或在 CLI 用输出的六个爻值加 `--lines` 重试。自定义配置用 `cyber-yi --config 配置路径 cast` 或 `serve`，文件中的相对路径以该配置文件所在目录为准。
-
-运行测试用 `uv run python -m unittest discover -s tests -v`，其中 HTTP 测试需要本机环回地址。
+模型失败时仍保留原卦与经文。点击「用原卦重试解读」复用原问题与六个爻值，不自动重试请求。编辑问题后需重新起卦，避免将旧卦用于新问题。
 
 ## 设计文档
 
 - [三钱起卦与《周易》取辞](docs/divination.md)
 - [本地语料、底本和整理方法](docs/corpus.md)
-- [Python 包、模型接入和交互界面](docs/architecture.md)
+- [纯前端架构、模型接入和交互界面](docs/architecture.md)
 - [仓库协作说明](AGENTS.md)

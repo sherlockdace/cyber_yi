@@ -1,38 +1,12 @@
-# UTF-8 JSONL corpus path, relative to this YAML file unless absolute.
-corpus: ../data/zhouyi.jsonl
-# Dotenv path for OPENAI_API_KEY, relative to this YAML file unless absolute.
-dotenv: ../.env
-# Maximum length of a nonblank question in Unicode characters, from 1 to 8000.
+# Maximum question length in Unicode characters; integer from 1 to 8000.
 max_question_length: 1000
-# Local HTTP port from 0 to 65535. Use 0 to let the system pick a free port.
-port: 8765
-
 model:
-  # Compatible HTTP(S) API root, e.g. https://api.openai.com/v1 or
-  # http://127.0.0.1:11434/v1. Set both base_url and name to enable requests.
-  base_url: 'https://api.deepseek.com'
-  # Provider model identifier. Leave null together with base_url for offline use.
-  name: 'deepseek-flash'
-  # Positive client timeout in seconds for each request attempt.
+  # Optional initial API root; users can change it in the page. HTTPS or loopback HTTP only.
+  base_url: ''
+  # Optional initial provider model identifier; blank requires user input.
+  name: ''
+  # Total request deadline in seconds, including streaming; number in (0, 86400].
   timeout: 600
-  # SDK retry count after a transient failure, from 0 to 2.
-  max_retries: 0
-  # DeepSeek Chat Completions extension. Set to null for providers without it.
-  thinking:
-    # enabled or disabled. This takes precedence when choosing DeepSeek's mode.
-    type: enabled
-  # Requested reasoning effort. DeepSeek accepts medium and maps it to high.
-  # Use none to disable thinking when thinking.type is unset, or null to omit.
-  reasoning_effort: medium
-  # OpenAI Chat Completions output cap, including reasoning tokens.
-  # DeepSeek documents a different field, so its enforcement is unverified.
-  max_completion_tokens: 16384
-  # Nucleus sampling probability in (0, 1]. Flash thinking floors it at 0.95.
-  # Flash without thinking fixes it at 1, and Pro thinking controls it internally.
-  top_p: 0.95
-  # Sampling temperature from 0 to 2. DeepSeek ignores it during thinking.
-  temperature: null
-  # Optional stop string or list of up to 16 strings (1–512 UTF-8 bytes each).
-  stop: null
-  # Path to the YAML system and user prompts, relative unless absolute.
-  prompts: prompts.yaml
+  # Extra Chat Completions fields. Provider-dependent; never put credentials here.
+  # Example: {max_tokens: 16384}. Core model/messages/stream fields cannot be overridden.
+  generation: {}

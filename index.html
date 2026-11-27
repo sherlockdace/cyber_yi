@@ -4,9 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>赛博周易</title>
-  <link rel="stylesheet" href="/style.css">
-  <script src="/markdown-it.min.js" defer></script>
-  <script src="/app.js" defer></script>
+  <script type="module" src="/src/main.ts"></script>
 </head>
 <body>
   <main>
@@ -24,6 +22,17 @@
           <button id="cast-button" type="submit" disabled>三钱起卦</button>
         </form>
         <div id="model-controls" hidden>
+          <details class="model-settings">
+            <summary>模型配置（可选）</summary>
+            <label for="model-endpoint">API 根地址</label>
+            <input id="model-endpoint" type="url" placeholder="https://api.example.com/v1" autocomplete="off" spellcheck="false">
+            <label for="model-name">模型名称</label>
+            <input id="model-name" type="text" placeholder="服务商提供的模型标识" autocomplete="off" spellcheck="false">
+            <label for="model-key">API Key</label>
+            <input id="model-key" type="password" autocomplete="off" spellcheck="false" aria-describedby="key-note">
+            <p id="key-note" class="muted">配置仅在当前页面保留，刷新后清除。请使用自己的密钥。</p>
+            <button id="clear-key" type="button">清除密钥</button>
+          </details>
           <p id="model-note"></p>
           <button id="interpret-button" type="button" disabled>请求模型解读</button>
         </div>
