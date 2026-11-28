@@ -1,0 +1,76 @@
+# Display name in the repository's Actions tab.
+name: Check and deploy GitHub Pages
+
+on:
+  push:
+    # Only updates to the primary branch publish the site.
+    branches: [main]
+  pull_request:
+    # Pull requests targeting main run checks without publishing.
+    branches: [main]
+  # Allows a manual run after enabling Pages in repository settings.
+  workflow_dispatch:
+
+# Build jobs can only read source; deployment permissions are scoped below.
+permissions:
+  contents: read
+
+concurrency:
+  # Serialize runs for each branch or pull request.
+  group: pages-${{ github.ref }}
+  # Let an active deployment finish instead of interrupting it.
+  cancel-in-progress: false
+
+jobs:
+  build:
+    # GitHub-hosted Linux runner for the Node.js build and offline tests.
+    runs-on: ubuntu-latest
+    steps:
+      # Fetch the checked-out revision using the official checkout action (v7).
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          # Later build steps do not need Git authentication.
+          persist-credentials: false
+      # Install Node.js using the official setup action (v7).
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          # Use Node.js 24 LTS, satisfying the package's 24.15+ requirement.
+          node-version: '24'
+          # Cache npm downloads, keyed automatically by package-lock.json.
+          cache: npm
+      # Reproduce dependencies from the committed lockfile.
+      - run: npm ci
+      # Run deterministic tests; no model service or API key is needed.
+      - run: npm test
+      # Type-check and produce the app with both views and bundled assets in dist/.
+      - run: npm run build
+      # Only trusted main-branch runs need a deployment artifact (action v5).
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        with:
+          # Publish only the static build, excluding source and raw downloads.
+          path: dist
+
+  deploy:
+    # Never publish a failed build or an unmerged pull request.
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    # GitHub-hosted runner for the official Pages actions.
+    runs-on: ubuntu-latest
+    permissions:
+      # Allow Pages metadata lookup and deployment.
+      pages: write
+      # Obtain the short-lived identity token required by Pages.
+      id-token: write
+    environment:
+      # Standard Pages environment; its repository protection rules still apply.
+      name: github-pages
+      # Show the actual deployed URL reported by GitHub.
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      # Read Pages configuration; enable GitHub Actions as the source first (v6).
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d
+      # Deploy the uploaded static artifact using the official action (v5).
+      - uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346
+        # Supplies the page_url output used by the environment above.
+        id: deployment

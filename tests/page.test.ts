@@ -13,7 +13,7 @@ async function waitFor(predicate: () => boolean): Promise<void> {
     throw new Error('Page did not settle');
 }
 
-test('bundled page casts locally, streams safely, preserves retries and clears credentials', async () => {
+test('bundled page preserves private state across navigation, streams safely and clears credentials', async () => {
     const result = await build({ logLevel: 'silent', build: { write: false } });
     assert.ok(!Array.isArray(result) && 'output' in result);
     const entry = result.output.find(item => item.type === 'chunk' && item.isEntry);
@@ -44,6 +44,8 @@ test('bundled page casts locally, streams safely, preserves retries and clears c
     }
     try {
         window.eval(entry.code);
+        assert.equal(element('cast-view').hidden, false);
+        assert.equal(element('method-view').hidden, true);
         assert.equal(element<HTMLButtonElement>('cast-button').disabled, false);
         input('question', '如何准备面谈？');
         element('cast-form').dispatchEvent(new window.Event('submit', { cancelable: true }));
@@ -63,6 +65,31 @@ test('bundled page casts locally, streams safely, preserves retries and clears c
         assert.equal(element('answer-text').querySelector('strong')?.textContent, '正文');
         assert.equal(element('answer-text').querySelector('script'), null);
         assert.match(element('answer-text').textContent!, /<script>/);
+        const answer = element('answer-text').innerHTML;
+        element('method-nav').click();
+        await waitFor(() => !element('method-view').hidden);
+        assert.equal(window.location.hash, '#method');
+        assert.equal(element('cast-view').hidden, true);
+        assert.equal(element('method-nav').getAttribute('aria-current'), 'page');
+        assert.equal(window.document.activeElement?.id, 'overview-title');
+        assert.equal(window.document.title, '起卦原理 · 赛博周易');
+        window.history.back();
+        await waitFor(() => !element('cast-view').hidden);
+        window.history.forward();
+        await waitFor(() => !element('method-view').hidden);
+        element('cast-nav').click();
+        await waitFor(() => !element('cast-view').hidden);
+        assert.equal(window.document.activeElement?.id, 'intro-title');
+        assert.equal(element('cast-nav').getAttribute('aria-current'), 'page');
+        assert.equal(element('method-nav').hasAttribute('aria-current'), false);
+        assert.equal(window.document.title, '赛博周易');
+        assert.equal(element<HTMLTextAreaElement>('question').value, '如何准备面谈？');
+        assert.equal(element<HTMLInputElement>('model-endpoint').value, 'https://model.example.test/v1');
+        assert.equal(element<HTMLInputElement>('model-name').value, 'mock-model');
+        assert.equal(element<HTMLInputElement>('model-key').value, 'test-placeholder');
+        assert.equal(element('cast-values').textContent, values);
+        assert.equal(element('answer-text').innerHTML, answer);
+        assert.equal(requests, 1);
         assert.equal(window.localStorage.length, 0);
         assert.equal(window.sessionStorage.length, 0);
         assert.equal(window.document.cookie, '');
@@ -77,6 +104,18 @@ test('bundled page casts locally, streams safely, preserves retries and clears c
         assert.equal(element('cast-values').textContent, values);
         input('question', '新问题');
         assert.equal(element<HTMLButtonElement>('interpret-button').disabled, true);
+        // A fresh document at the guide URL has no state from the previous page.
+        const fresh = new JSDOM(readFileSync('index.html', 'utf8'), { url: 'https://example.test/cyber-yi/#method', runScripts: 'outside-only' });
+        try {
+            fresh.window.eval(entry.code);
+            assert.equal(fresh.window.document.getElementById('method-view')?.hidden, false);
+            assert.equal(fresh.window.document.getElementById('cast-view')?.hidden, true);
+            assert.equal((fresh.window.document.getElementById('model-key') as HTMLInputElement).value, '');
+            assert.equal((fresh.window.document.getElementById('question') as HTMLTextAreaElement).value, '');
+            assert.equal(fresh.window.document.getElementById('result')?.hidden, true);
+        } finally {
+            fresh.window.close();
+        }
         element('clear-key').click();
         assert.equal(element<HTMLInputElement>('model-key').value, '');
         assert.equal(element<HTMLButtonElement>('interpret-button').disabled, true);

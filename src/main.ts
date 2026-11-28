@@ -33,6 +33,25 @@ let reading: DisplayReading | null = null;
 let originalQuestion = "";
 let busy = false;
 /**
+ * Show the view selected by the URL hash without recreating either view or its state.
+ * @param focusHeading Whether to move keyboard focus to the visible view's heading after navigation.
+ * @returns No value; updates visibility, navigation labels and document title. No data is persisted.
+ */
+function showView(focusHeading: boolean): void {
+    const method = window.location.hash === '#method';
+    select('#cast-view').hidden = method;
+    select('#method-view').hidden = !method;
+    const active = select(method ? '#method-nav' : '#cast-nav');
+    const inactive = select(method ? '#cast-nav' : '#method-nav');
+    active.setAttribute('aria-current', 'page');
+    inactive.removeAttribute('aria-current');
+    document.title = method ? '起卦原理 · 赛博周易' : '赛博周易';
+    if (focusHeading)
+        select(method ? '#overview-title' : '#intro-title').focus();
+}
+window.addEventListener('hashchange', () => showView(true));
+showView(false);
+/**
  * Create a DOM element and set plain text.
  * @param {string} tag HTML tag name.
  * @param {string} text Text to display.

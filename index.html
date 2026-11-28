@@ -11,61 +11,177 @@
     <header class="masthead">
       <h1>赛博周易</h1>
       <p>三钱起卦 · 周易经传</p>
+      <nav class="site-nav" aria-label="主导航">
+        <a id="cast-nav" href="#cast" aria-current="page">起卦</a>
+        <a id="method-nav" href="#method">起卦原理</a>
+      </nav>
     </header>
-    <div class="layout">
-      <section class="question" aria-labelledby="question-title">
-        <h2 id="question-title">起卦</h2>
-        <form id="cast-form">
-          <label for="question">所问之事</label>
-          <textarea id="question" name="question" rows="5" required
-            placeholder="例如，我该如何准备接下来的面谈？"></textarea>
-          <button id="cast-button" type="submit" disabled>三钱起卦</button>
-        </form>
-        <div id="model-controls" hidden>
-          <details class="model-settings">
-            <summary>模型配置（可选）</summary>
-            <label for="model-endpoint">API 根地址</label>
-            <input id="model-endpoint" type="url" placeholder="https://api.example.com/v1" autocomplete="off" spellcheck="false">
-            <label for="model-name">模型名称</label>
-            <input id="model-name" type="text" placeholder="服务商提供的模型标识" autocomplete="off" spellcheck="false">
-            <label for="model-key">API Key</label>
-            <input id="model-key" type="password" autocomplete="off" spellcheck="false" aria-describedby="key-note">
-            <p id="key-note" class="muted">配置仅在当前页面保留，刷新后清除。请使用自己的密钥。</p>
-            <button id="clear-key" type="button">清除密钥</button>
-          </details>
-          <p id="model-note"></p>
-          <button id="interpret-button" type="button" disabled>请求模型解读</button>
-        </div>
-        <p id="status" role="status"></p>
+    <div id="cast-view">
+      <section class="intro" aria-labelledby="intro-title">
+        <p class="eyebrow">以经文为镜，梳理所问之事</p>
+        <h2 id="intro-title" tabindex="-1">从一个具体的问题开始。</h2>
+        <p>模拟三枚铜钱，生成六爻，读一段与本次卦象对应的《周易》经文。也可以接入自己的模型，结合处境进一步解读。</p>
+        <ol class="journey" aria-label="使用流程">
+          <li>提问<span>聚焦一件事</span></li>
+          <li>起卦<span>三钱成爻，六爻成卦</span></li>
+          <li>读经<span>查看卦象与所取经传</span></li>
+          <li>解读<span>自行思考，或选用 AI</span></li>
+        </ol>
       </section>
-      <section class="output" aria-labelledby="cast-title">
-        <h2 id="cast-title" tabindex="-1">卦象</h2>
-        <div id="empty">
-          <div class="empty-lines" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
-          <p>起卦后查看本卦、动爻与经文。</p>
-        </div>
-        <div id="result" hidden>
-          <p id="cast-question" class="muted"></p>
-          <p id="cast-values" class="muted"></p>
-          <div id="figures"></div>
-          <h2 class="section-title">经文与传文</h2>
-          <div id="passages"></div>
-          <div id="originals"></div>
-        </div>
-        <section id="answer" aria-labelledby="answer-title" hidden>
-          <h2 id="answer-title" class="section-title" tabindex="-1">模型解读</h2>
-          <p id="answer-status" class="muted"></p>
-          <details id="reasoning" open hidden>
-            <summary>思考过程</summary>
-            <div id="reasoning-text" class="markdown reasoning-text"></div>
-          </details>
-          <section id="answer-content" aria-labelledby="content-title" hidden>
-            <h3 id="content-title">解读正文</h3>
-            <div id="answer-text" class="markdown"></div>
+      <div class="layout">
+        <section class="question" aria-labelledby="question-title">
+          <h2 id="question-title">起卦</h2>
+          <p class="question-help" id="question-help">写清处境和你想采取的行动。例如「如何准备接下来的面谈？」或「推进这个合作时，我应注意什么？」</p>
+          <form id="cast-form">
+            <label for="question">所问之事</label>
+            <textarea id="question" name="question" rows="5" required aria-describedby="question-help"
+              placeholder="例如，我该如何准备接下来的面谈？"></textarea>
+            <button id="cast-button" type="submit" disabled>三钱起卦</button>
+          </form>
+          <div id="model-controls" hidden>
+            <details class="model-settings">
+              <summary>模型配置（可选）</summary>
+              <label for="model-endpoint">API 根地址</label>
+              <input id="model-endpoint" type="url" placeholder="https://api.example.com/v1" autocomplete="off" spellcheck="false">
+              <label for="model-name">模型名称</label>
+              <input id="model-name" type="text" placeholder="服务商提供的模型标识" autocomplete="off" spellcheck="false">
+              <label for="model-key">API Key</label>
+              <input id="model-key" type="password" autocomplete="off" spellcheck="false" aria-describedby="key-note">
+              <p id="key-note" class="muted">配置仅在当前页面保留，刷新后清除。请使用自己的密钥。</p>
+              <button id="clear-key" type="button">清除密钥</button>
+            </details>
+            <p id="model-note"></p>
+            <button id="interpret-button" type="button" disabled>请求模型解读</button>
+          </div>
+          <p id="status" role="status"></p>
+        </section>
+        <section class="output" aria-labelledby="cast-title">
+          <h2 id="cast-title" tabindex="-1">卦象</h2>
+          <div id="empty">
+            <div class="empty-lines" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <p>起卦后查看本卦、动爻与经文。</p>
+          </div>
+          <div id="result" hidden>
+            <p id="cast-question" class="muted"></p>
+            <p id="cast-values" class="muted"></p>
+            <div id="figures"></div>
+            <h2 class="section-title">经文与传文</h2>
+            <div id="passages"></div>
+            <div id="originals"></div>
+          </div>
+          <section id="answer" aria-labelledby="answer-title" hidden>
+            <h2 id="answer-title" class="section-title" tabindex="-1">模型解读</h2>
+            <p id="answer-status" class="muted"></p>
+            <details id="reasoning" open hidden>
+              <summary>思考过程</summary>
+              <div id="reasoning-text" class="markdown reasoning-text"></div>
+            </details>
+            <section id="answer-content" aria-labelledby="content-title" hidden>
+              <h3 id="content-title">解读正文</h3>
+              <div id="answer-text" class="markdown"></div>
+            </section>
           </section>
         </section>
+      </div>
+    </div>
+    <div id="method-view" class="guide" hidden>
+      <section class="intro" aria-labelledby="overview-title">
+        <p class="eyebrow">先起卦，再取辞，最后解读</p>
+        <h2 id="overview-title" tabindex="-1">每一步，都可以看清来由。</h2>
+        <p>赛博周易采用三钱法生成六爻，再按动爻情况选取《周易》经文。这是本项目采用的一套起卦与取辞方法，并非所有易学流派的统一规则。</p>
+        <ol class="journey">
+          <li>三枚钱<span>相加得到一个爻值</span></li>
+          <li>六个爻<span>自下而上组成本卦</span></li>
+          <li>看变化<span>动爻翻转形成之卦</span></li>
+          <li>读经文<span>按规则选取卦辞或爻辞</span></li>
+        </ol>
+      </section>
+      <section class="guide-section" aria-labelledby="coins-title">
+        <h2 id="coins-title">三枚铜钱，怎样得到一爻？</h2>
+        <p>每枚钱的面记为 2，背记为 3。将三枚钱的数值相加，得到 6、7、8 或 9。网页用浏览器随机数模拟公平投币，每次起卦共生成六个爻值。</p>
+        <div class="coin-example" aria-label="示例：面二，加面二，加背三，等于七，为少阳">
+          <span class="coin">面 · 2</span><span>＋</span><span class="coin">面 · 2</span><span>＋</span><span class="coin">背 · 3</span><span>＝ <strong>7 · 少阳</strong></span>
+        </div>
+        <div class="table-scroll" role="region" aria-label="四种爻值" tabindex="0">
+          <table class="guide-table">
+            <thead><tr><th scope="col">爻值</th><th scope="col">名称</th><th scope="col">本卦中的形状</th><th scope="col">是否变化</th><th scope="col">概率</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">6</th><td>老阴</td><td>阴爻 · 断线</td><td>变为阳爻</td><td>1/8</td></tr>
+              <tr><th scope="row">7</th><td>少阳</td><td>阳爻 · 实线</td><td>不变</td><td>3/8</td></tr>
+              <tr><th scope="row">8</th><td>少阴</td><td>阴爻 · 断线</td><td>不变</td><td>3/8</td></tr>
+              <tr><th scope="row">9</th><td>老阳</td><td>阳爻 · 实线</td><td>变为阴爻</td><td>1/8</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="muted">三枚公平钱共有八种等可能排列，因此四种爻值的概率并不相同。</p>
+      </section>
+      <section class="guide-section" aria-labelledby="figures-title">
+        <h2 id="figures-title">六爻成卦，动爻带来变化</h2>
+        <p>第一次投掷是最下面的「初爻」，第六次是最上面的「上爻」。六爻组成的原始卦象叫本卦；其中 6 和 9 是动爻，将这些位置的阴阳翻转，就得到之卦，也称变卦。没有动爻时，本项目只显示本卦。</p>
+        <div class="worked-example">
+          <figure class="hexagram">
+            <figcaption>本卦 · 乾</figcaption>
+            <div class="diagram" role="img" aria-label="乾卦，六爻皆阳，初爻为九，是唯一动爻；其余爻值为七">
+              <div class="line"><span>上</span><i class="line-bar"></i><span>7</span></div>
+              <div class="line"><span>五</span><i class="line-bar"></i><span>7</span></div>
+              <div class="line"><span>四</span><i class="line-bar"></i><span>7</span></div>
+              <div class="line"><span>三</span><i class="line-bar"></i><span>7</span></div>
+              <div class="line"><span>二</span><i class="line-bar"></i><span>7</span></div>
+              <div class="line moving"><span>初</span><i class="line-bar"></i><span>9 动</span></div>
+            </div>
+          </figure>
+          <p class="change-caption">初爻由阳变阴<br><span class="muted">其余五爻不变</span></p>
+          <figure class="hexagram">
+            <figcaption>之卦 · 姤</figcaption>
+            <div class="diagram" role="img" aria-label="姤卦，初爻为阴，其余五爻皆阳">
+              <div class="line"><span>上</span><i class="line-bar"></i><span>阳</span></div>
+              <div class="line"><span>五</span><i class="line-bar"></i><span>阳</span></div>
+              <div class="line"><span>四</span><i class="line-bar"></i><span>阳</span></div>
+              <div class="line"><span>三</span><i class="line-bar"></i><span>阳</span></div>
+              <div class="line"><span>二</span><i class="line-bar"></i><span>阳</span></div>
+              <div class="line moving"><span>初</span><i class="line-bar yin"></i><span>阴</span></div>
+            </div>
+          </figure>
+        </div>
+        <p>这个例子的爻值从下到上是 <code>[9, 7, 7, 7, 7, 7]</code>。只有初爻动，因此取本卦乾的初九爻辞：</p>
+        <blockquote class="quotation">潜龙勿用。</blockquote>
+        <p>这里的「九」是阳爻题签；经文中的「九」「六」标记阴阳，不等同于本次是否掷出了动爻。</p>
+      </section>
+      <section class="guide-section" aria-labelledby="passages-title">
+        <h2 id="passages-title">为什么选中这几段经文？</h2>
+        <p>卦辞说一卦，爻辞说一爻。本项目参考《易学启蒙》〈考变占〉的取辞规则，按动爻数量选择经文，并附相应传文帮助阅读。</p>
+        <div class="table-scroll" role="region" aria-label="动爻与取辞规则" tabindex="0">
+          <table class="guide-table">
+            <thead><tr><th scope="col">动爻数</th><th scope="col">读哪些经文</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">0</th><td>本卦卦辞。</td></tr>
+              <tr><th scope="row">1</th><td>本卦该动爻的爻辞。</td></tr>
+              <tr><th scope="row">2</th><td>本卦两条动爻爻辞，位置较高者为主。</td></tr>
+              <tr><th scope="row">3</th><td>本卦（贞）与之卦（悔）的卦辞并列。</td></tr>
+              <tr><th scope="row">4</th><td>之卦两条未动位置的爻辞，位置较低者为主。</td></tr>
+              <tr><th scope="row">5</th><td>之卦唯一未动位置的爻辞。</td></tr>
+              <tr><th scope="row">6</th><td>本卦为乾取「用九」，为坤取「用六」，其余取之卦卦辞。</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="muted">实现边界：三爻变时暂不依据变占图判定两条卦辞的主次；无动爻的内外卦贞悔暂不参与取辞。本项目未实现纳甲、世应、六亲等其他断法。</p>
+      </section>
+      <section class="guide-section" aria-labelledby="model-title">
+        <h2 id="model-title">AI 在哪一步参与？</h2>
+        <p>起卦、查卦和选择经文都在浏览器本地完成，不需要模型或密钥。只有你主动请求模型解读时，问题与选定经传才会发送至你配置的服务。模型负责结合处境解读，不负责重算卦象。</p>
+        <p>解读失败不会改变原卦，再次请求会沿用同一个结果。密钥仅保留在当前页面内存，刷新即清除。这里的解读用于传统文化体验与自我反思，不是对未来的确定预言。</p>
+      </section>
+      <section class="guide-section" aria-labelledby="sources-title">
+        <h2 id="sources-title">继续读原典</h2>
+        <ul class="source-list">
+          <li><a href="https://www.shidianguji.com/zh/book/CADAL02042087/chapter/1l7m54py7wnxm">《周易详说》卷十八〈钱卜法〉</a>：三钱组合与老少阴阳。</li>
+          <li><a href="https://zh.wikisource.org/wiki/易學啟蒙通釋_(四庫全書本)/卷下">《易学启蒙通释》卷下〈考变占〉</a>：本项目取辞规则的参考。</li>
+          <li><a href="https://zh.wikisource.org/wiki/周易/乾">《周易·乾》</a>：示例中的初九爻辞。</li>
+        </ul>
+        <a class="back-link" href="#cast">返回起卦</a>
       </section>
     </div>
+    <footer class="site-footer">用于传统文化体验与自我反思。起卦与取辞由程序完成，模型只负责解读。</footer>
   </main>
 </body>
 </html>

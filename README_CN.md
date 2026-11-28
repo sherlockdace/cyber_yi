@@ -23,7 +23,22 @@ npm run preview
 
 `npm test` 运行固定卦例、全部 4,096 种爻值组合、配置校验、模拟流式模型测试与打包页面的 DOM 集成测试。`npm run build` 先做严格 TypeScript 类型检查，再生成 `dist/`。将 `dist/` 部署到任意静态托管服务即可；资源使用相对路径，支持子目录部署。生产部署使用 HTTPS，本机开发可用 localhost/127.0.0.1。请通过 HTTP(S) 访问，不要直接双击 HTML 文件。
 
+## GitHub Pages 部署
+
+仓库提供 [Pages 工作流](.github/workflows/pages.yml)，使用 Node.js 24 安装锁定依赖、运行离线测试并构建 `dist/`。PR 只做检查；推送到 `main` 或在 `main` 上手动运行工作流时，通过检查后发布应用。
+
+首次启用：
+
+1. 将代码和工作流推送到 GitHub 仓库。
+2. 打开仓库 **Settings → Pages → Build and deployment**，将 **Source** 选为 **GitHub Actions**。
+3. 在 **Actions → Check and deploy GitHub Pages → Run workflow** 中选择 `main` 运行。后续推送到 `main` 会自动更新。
+4. 等待 `deploy` 成功，使用其 `github-pages` 环境显示的网址访问。无自定义域名时，本仓库默认地址为 `https://sherlockdace.github.io/cyber_yi/`；若账号配置了自定义域名，以 GitHub 显示的实际地址为准。
+
+这是项目站点，可与已有个人主页共存。访客无需安装 npm。无需配置个人访问令牌或模型密钥到 Actions Secrets，发布使用 GitHub 自动提供的工作流令牌。模型密钥仍由访客在页面输入。如果首次运行提示找不到 Pages 站点，完成第 2 步后重新运行。部署配置已提供，是否上线以 Actions 的实际结果为准。
+
 ## 使用流程
+
+首页提供提问示例与「提问、起卦、读经、解读」引导。「起卦」和「起卦原理」在同一标签页内切换，保留问题、卦象、解读和模型配置，支持浏览器前进和后退。地址中的 `#cast`、`#method` 只表示当前视图，不包含用户数据；刷新后清空本次输入与结果，密钥仍仅在内存中保存。原理视图介绍三钱法、动爻、取辞规则与乾初爻变姤的完整示例，也说明程序与 AI 的分工及现有取辞实现的边界。
 
 1. 输入问题，点击「三钱起卦」。六爻按初爻到上爻生成，卦画以上爻在顶部显示。
 2. 查看本卦、动爻、之卦及附有出处的经传，无动爻时只显示本卦。

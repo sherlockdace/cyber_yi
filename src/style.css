@@ -129,3 +129,41 @@ input { width: 100%; min-width: 0; padding: 10px; margin-bottom: 12px; border: 1
 .model-settings summary { cursor: pointer; margin-bottom: 12px; }
 #key-note { font-size: .85rem; margin-bottom: 10px; }
 #clear-key { background: transparent; color: var(--accent); margin-bottom: 12px; }
+
+a { color: var(--accent); text-underline-offset: .2em; }
+.site-nav { display: flex; flex-wrap: wrap; gap: 12px 24px; width: 100%; }
+.site-nav a { text-decoration: none; padding-block: 8px; }
+.site-nav a[aria-current="page"] { border-bottom: 2px solid var(--accent); font-weight: 600; }
+.intro { margin-bottom: 32px; }
+.intro > p { max-width: 48rem; }
+.intro h2 { font-size: clamp(1.7rem, 4vw, 2.3rem); margin: 10px 0 14px; }
+.eyebrow { color: var(--accent); font-size: .875rem; letter-spacing: .1em; }
+.journey { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; list-style: none; padding: 0; margin: 24px 0 0; counter-reset: step; }
+.journey li { counter-increment: step; border-top: 1px solid var(--rule); padding-top: 12px; font-weight: 600; }
+.journey li::before { content: counter(step, decimal-leading-zero); display: block; color: var(--accent); font-size: .875rem; font-weight: 400; }
+.journey span { display: block; font-size: .875rem; color: var(--muted); font-weight: 400; margin-top: 4px; }
+.question-help { font-size: .875rem; color: var(--muted); margin-bottom: 20px; }
+.site-footer { margin-top: 32px; border-top: 1px solid var(--rule); padding-top: 16px; color: var(--muted); font-size: .875rem; }
+.guide { max-width: 800px; margin-inline: auto; }
+.guide-section { padding: clamp(18px, 4vw, 32px); margin-top: 24px; background: var(--paper); border: 1px solid var(--rule); }
+.guide-section p + p { margin-top: 12px; }
+.coin-example { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin: 24px 0; }
+.coin { display: grid; place-content: center; width: 64px; height: 64px; border: 2px solid #81704e; border-radius: 50%; background: var(--surface); font-family: var(--serif); }
+.table-scroll { overflow-x: auto; margin: 20px 0; }
+.guide-table { border-collapse: collapse; width: 100%; text-align: left; }
+.guide-table th, .guide-table td { padding: 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+.guide-table thead { background: var(--surface); }
+.guide-table th:first-child { white-space: nowrap; }
+.worked-example { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 16px; align-items: center; margin: 24px 0; }
+.change-caption { text-align: center; font-size: .875rem; color: var(--accent); }
+.guide code { overflow-wrap: anywhere; }
+.source-list { padding-left: 1.25em; }
+.source-list li + li { margin-top: 12px; }
+.source-list a { overflow-wrap: anywhere; }
+.back-link { display: inline-block; padding: 10px 18px; margin-top: 12px; border: 1px solid var(--accent); text-decoration: none; }
+@media (max-width: 600px) {
+  .journey { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .worked-example { grid-template-columns: minmax(0, 1fr); }
+  .worked-example .hexagram { width: 100%; max-width: 300px; margin-inline: auto; }
+  .guide-table th, .guide-table td { padding: 10px 8px; }
+}
